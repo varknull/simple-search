@@ -1,0 +1,42 @@
+version: '2.1'
+services:
+  #############################################################################
+  #
+  # Redis
+  #
+  #############################################################################
+  redis:
+    container_name: redis
+    image: redis
+    hostname: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD-SHELL", "test \"$$(redis-cli ping)\" = 'PONG'"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+  #############################################################################
+  #
+  # vertx
+  #
+  #############################################################################
+  vertx:
+    container_name: "vertx-service"
+    image: library/openjdk:8-jre
+    command: java -jar /opt/vertx-service/${APP_JAR} -conf /etc/vertx-service/conf.json
+    environment:
+      APP_JAR: "${APP_JAR}"
+    volumes:
+      - ${WORKING_DIR}/src/resources:/etc/vertx-service/
+      - ${WORKING_DIR}/target:/opt/vertx-service
+    ports:
+      - "8888:8888"
+    healthcheck:
+      test: ["CMD", "echo", ">", "/dev/tcp/localhost/8888"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+    depends_on:
+      redis:
+        condition: service_healthy
