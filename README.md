@@ -1,4 +1,4 @@
-# Simple search service example
+# Simple search service example [![Build Status](https://travis-ci.org/varknull/simple-search.svg?branch=master)](https://travis-ci.org/varknull/simple-search)
 
 Scalable HTTP API that optimize for high throughput and low latency searching in data.json by word (or combination of words).
 The search complexity is independent from the growth of the data set
